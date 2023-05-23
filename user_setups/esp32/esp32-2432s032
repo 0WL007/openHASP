@@ -1,0 +1,79 @@
+;***************************************************;
+;       Sunton ESP32-WROOM custom dev board with    ;
+;               - ST7789 TFT SPI 4-WIRE             ;
+;               - XPT2046 or GT911 touch controller ;
+;***************************************************;
+
+[esp32-2432s032]
+extends = arduino_esp32_v2
+board = esp32dev
+
+build_flags =
+    ${arduino_esp32_v2.build_flags}
+    ${esp32.no_ps_ram}
+
+;region -- TFT_eSPI build options ------------------------
+    ${esp32.hspi}        ; Use HSPI hardware SPI bus
+    -D LGFX_USE_V1=1
+    -D ST7789_DRIVER=1
+    -D TFT_WIDTH=240
+    -D TFT_HEIGHT=320
+    -D TFT_ROTATION=0          ; see TFT_ROTATION values
+    -D TFT_RGB_ORDER=0         ; Colour order Blue-Green-Red
+    -D TFT_SDA_READ            ; Read from display, it only provides an SDA pin
+    -D SUPPORT_TRANSACTIONS
+    -D SPI_FREQUENCY=65000000
+    -D SPI_READ_FREQUENCY=20000000
+    -D TFT_RST=35        ; RESET
+    -D TFT_SCLK=14       ; 12 or 36 (FSPI CLK)
+    -D TFT_DC=2          ; 
+    -D TFT_CS=15         ; FCP pin5 CS
+    -D TFT_MOSI=13       ; FCP pin6 SDA
+    -D TFT_MISO=12       ; FCP pin7 SDO
+    -D TFT_BCKL=27
+ ;   -D TOUCH_DRIVER=0x2046 ; or GT911 0911
+ ;   -D HASP_USE_LGFX_TOUCH=1
+ ;   -D TOUCH_SCLK=14
+ ;   -D TOUCH_CS=33
+ ;   -D TOUCH_MISO=12
+ ;   -D TOUCH_MOSI=13
+ ;   -D TOUCH_IRQ=36
+    -D TOUCH_DRIVER=0x0911 ; GT911
+    -D HASP_USE_LGFX_TOUCH=1
+    -D TOUCH_SDA=33
+    -D TOUCH_SCL=32
+    -D TOUCH_IRQ=-1   ; not connected (or 36)
+    -D TOUCH_RST=25   ; 
+    -D TOUCH_WIDTH=240
+    -D TOUCH_HEIGHT=320
+    -D I2C_TOUCH_FREQUENCY=400000
+    -D I2C_TOUCH_PORT=1
+    -D I2C_TOUCH_ADDRESS=0x5D ; or 0x14
+    -D LED_RED=4
+    -D LED_GREEN=16
+    -D LED_BLUE=17
+    -D SD_MOSI=23
+    -D SD_MISO=19
+    -D SD_SCK=18
+    -D SD_CS=5
+
+
+;endregion
+
+[env:esp32-2432s032c_4MB]
+extends = esp32-2432s032, flash_4mb
+board = esp32dev
+
+build_flags =
+    ${esp32-2432s032.build_flags}
+
+
+
+; -- Debugging options -----------------------------
+;   -D CORE_DEBUG_LEVEL=ARDUHAL_LOG_LEVEL_DEBUG
+
+lib_deps =
+    ${arduino_esp32_v2.lib_deps}
+    ;${tft_espi.lib_deps}
+    ${lovyangfx.lib_deps}
+    ;${goodix.lib_deps}
